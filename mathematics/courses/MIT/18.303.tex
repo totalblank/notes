@@ -18,6 +18,7 @@
 \usepackage{pgfplots}
 \usepackage{bm}
 \usepackage{hyperref}
+\usepackage{array}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Other Settings
@@ -54,6 +55,9 @@
 \pgfplotsset{width=8cm,compat=1.9}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+% Define new commands
+\newcommand{\innerp}[2]{\left\langle #1 \vert #2 \right\rangle}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% Title & Author %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \title{Linear Partial Differential Equations}
 \author{Aheer Srabon}
@@ -68,14 +72,14 @@
     of linear partial differential equations (PDEs) for practical applications in science 
     engineering, including heat/diffusion, wave, and Poisson equations.
 
-    Analytics emphasize the viewpoint of linear algebra and the analogy with finite matrix
+    \noindent Analytics emphasize the viewpoint of linear algebra and the analogy with finite matrix
     problems including operator adjoints and eigenproblems, series solutions, Green’s functions,
     and separation of variables.
 
-    Numerics focus on finite-difference and finite-element techniques to reduce PDEs to matrix
+    \noindent Numerics focus on finite-difference and finite-element techniques to reduce PDEs to matrix
     problems, including stability and convergence analysis and implicit/explicit time-stepping.
 
-    Julia programming language is introduced and used in homework for simple examples.
+    \noindent Julia programming language is introduced and used in homework for simple examples.
     Julia is a high-level, high-performance dynamic language for technical computing,
     with syntax that is familiar to users of other technical computing environments.
     It provides a sophisticated compiler, distributed parallel execution, numerical accuracy,
@@ -144,7 +148,7 @@
     \end{itemize}
 
     \section{Lecture notes}
-    \subsection{Overview of linear PDEs and analogies with matrix algebra}
+    \subsection{L 01 - Overview of linear PDEs and analogies with matrix algebra}
 
     \noindent A few important PDEs are,
     \begin{itemize}
@@ -162,30 +166,153 @@
 	\item Black-Scholes
     \end{itemize}
 
-    \begin{table}
-    	\caption{A few important PDEs}\label{tab:pdes}
-    	\begin{center}
-    		\begin{tabular}[c]{l|l|l}
-    			\hline
-    			\multicolumn{1}{c|}{\textbf{}} & 
-			\multicolumn{1}{c|}{\textbf{Constant coefficients = 1}} &
-			\multicolumn{1}{c}{\textbf{variable coefficients = $c(x) $}} \\
-    			\hline
-    			a & b \\
-			
-			\hline
-			Poisson's equation &
-			$ \Delta^2 u = f $
-			example: f = charge density,
-			u = - electric potential &
-			$ \Delta \cdot (c \Delta u) = f $ \\
+    \begin{center}
+	\begin{tabular}{ | m{5cm} | m{5cm} | m{5cm} | }
+		\hline
+		 & constant coefficients = 1 &
+		 variable coefficients = c(\textbf{x}) \\
 
-			\hline
+		 \hline
+		 Poisson's equation: 
+		 &
+		 $ \Delta^2 u = f $ \newline \newline
+		 \textbf{example:} $ f $ = charge density, 
+		 \newline
+		 $ u $ = - electric potential 
+		 \newline
+		 \textbf{example:} $ f $ = heat source / sink rate 
+		 \newline
+		 $ u $ = steady-state temperature 
+		 \newline
+		 \textbf{example:} $ f $ = solute source / sink rate 
+		 \newline
+		 $ u $ = steady state concentration 
+		 \newline
+		 \textbf{example:} $ f  \sim $ force on stretched string/drum 
+		 \newline
+		 $ u $ = steady-state displacement
+		 &
+		 $ \Delta \cdot (c \Delta u) = f $
+		 \newline \newline \newline
+		 c = permittivity $ \varepsilon $ \newline \newline \newline
+		 c = thermal conductivity \newline \newline \newline
+		 c = diffusion coefficient \newline \newline \newline
+		 $ c \sim $ "springy-new" \\
 
-    			
-    		\end{tabular}
-    	\end{center}
-    \end{table}
+		 \hline
+		 Laplace's equation:
+		 &
+		 $ \Delta^2 u = 0 $ \newline
+		 \textbf{examples:} as for Poisson, but no sources
+		 &
+		 $ \Delta \cdot (c \Delta u) = 0 $ \\
+
+		 \hline
+		 Heat / diffusion equation:
+		 &
+		 $ \frac{\partial u}{\partial t} = \Delta^2 u $ \newline
+		 \textbf{examples:} $ u $ = temperature \newline
+		 $ u $ = solute concentration
+		 &
+		$ \frac{\partial^2 u}{\partial t^2} = \Delta \cdot (c \Delta u) $ \newline
+		$ c $ = thermal conductivity \newline
+		$ c $ = diffusion coefficient \\
+
+		 \hline
+		 Scalar wave equation:
+		 &
+		 $ \frac{\partial^2 u}{\partial t^2} = \Delta^2 u $ \newline
+		 \textbf{examples:} \newline
+		 $ u $ = displacement of stretched string / drum \newline
+		 $ u $= density of gas / fluid 
+		 &
+		 $ \frac{\partial^2 u}{\partial t^2} = \Delta \cdot (c \Delta u) $ \newline
+		 $ c^2 = $ 1 / wave speed \\
+
+		 \hline
+
+    	\end{tabular}
+    \end{center}
+
+    \noindent Difference between 18.06 and 18.303 is outlined. As I didn't
+    take 18.06, I wouldn't know. 
+
+    \subsection{L 02 - Poisson's equation and eignefunctions in 1D: Fourier sine series}
+    \subsubsection{Orthogonality of two functions}
+    \noindent Two real functions $ f(x) $ and $ g(x) $ are orthogonal if for any interval 
+    $ (a, b) $ in both of their domain, the following is true,
+    \begin{equation}
+	    \int_{a}^{b} f(x) g(x) \, dx = 0
+	    \label{eqn:1}
+    \end{equation}
     
-    
+    \noindent The dot product of two functions is defined as,
+    \begin{equation}
+	f(x) \cdot g(x) = \int_{-\infty}^{\infty} f(x) g(x) \, dx
+    	\label{eq:2}
+    \end{equation}
+
+    \noindent If the functions are complex functions, the dot product (or inner product)
+    of the two functions are defined as,
+
+    \begin{equation}
+	\innerp{f}{g} = \int_{-\infty}^{-\infty} \overline{f(x)} g(x) \, dx
+    	\label{eq:3}
+    \end{equation}
+
+    \noindent Equations \ref{eq:2} and \ref{eq:3} need not to be from $ -\infty $ to $ \infty $.
+    The limit can be any interval that is being considered.
+    It can be shown than for two sine function $ sin(n \pi x) $ and 
+    $ sin(m \pi x) $, they are orthogonal if $ n \neq m $. They are not orthogonal
+    otherwise.
+
+    \subsubsection{Fourier sine series}
+    \noindent The Fourier sine series for a function $ f(x) $ defined on
+    $ x \in [0,1] $ writes $ f(x) $ as,
+
+    \begin{equation}
+	    f(x) = \sum_{n=1}^{\infty} b_n sin(n \pi x)
+    	\label{eq:4}
+    \end{equation}
+
+    \noindent $ b_n $ can be computed by multiplying both sides of equation \ref{eq:4}
+    by $ sin(m \pi x) $ and then integrating both sides from 0 to 1.
+
+    \begin{equation}
+	b_m = 2 \int_{0}^{1} f(x) sin(m \pi x) \, dx
+    	\label{eq:5}
+    \end{equation}
+
+    \noindent Fourier claimed (without proof) that \emph{any} function
+    $ f(x) $ can be expanded in terms of sines in this way, even
+    discontinuous functions! That is, these sine functions form an
+    \emph{orthogonal basis} for "all" functions! But this turned out to be
+    false. Rather Carleson (1966) and Hunt (1968) proved that: any function
+    $ f(x) $ where $ \int (\lvert f(x) \rvert)^p \, dx $ is finite for some
+    $ p > 1 $ has a Fourier series that converges \emph{almost} everywhere
+    to $ f(x) $ (except at isolated points). At points where $ f(x) $ has
+    a jump discontinuity, the Fourier series converges to the midpoint of
+    the jump. Except for crazy \emph{divergent functions} or the function
+    values exactly at points of discontinuity, Fourier's remarkable claim
+    is essentially true.
+
+    \noindent for $ f(x) = 1 $,
+    \begin{equation}
+	b_n = 
+    	\begin{cases}
+		\frac{4}{n \pi} & \text{n odd} \\
+		0 & \text{n even}
+    	\end{cases}
+    	\label{eq:6}
+    \end{equation}
+
+    \pagebreak
+
+    \noindent For triangular function $ f(x) = \frac{1}{2} - \lvert x - \frac{1}{2} \rvert $, $ b_{m, \text{odd}} = \frac{4}{(m \pi)^2} (-1)^{\frac{m-1}{2}} $ . And the Fourier sine series of that triangular function is,
+
+    \begin{equation}
+	    f(x) = \frac{4}{\pi^2} sin(\pi x) - \frac{4}{(3 \pi)^2} sin(3 \pi x) + \frac{4}{(5 \pi)^2} sin(5 \pi x) + ...
+    	\label{eq:7}
+    \end{equation}
+
 \end{document}
