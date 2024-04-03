@@ -1,0 +1,175 @@
+\input{preamble.tex}
+
+\title{Quantum Physics}
+\author{Aheer srabon}
+\date{}
+
+\begin{document}
+\maketitle
+
+	\section{Linear algebra}
+	\noindent Physical quantities can sometimes be discrete,
+	not only continuous.
+
+	\section{Kets and wave function}
+	\noindent  Linear algebra and vector spaces are all about
+	structure and patterns, not about the type of objects being
+	used. A particle is represented by a vector in a vector space.
+	A vector in this vector space represent a quantum state. A
+	quantum state is a mathematical object that holds all the
+	physical properties of a particle.
+
+	\noindent Quantum superposition,
+	\begin{equation}
+		\ket{\psi} = \sum c_i \ket{E_i}
+		\label{eq:1}
+	\end{equation}
+
+	\noindent Here, $ \ket{\psi} $ is the quantum state of the 
+	particle, which is a linear combination of the states (
+	$ \ket{E_i} $. The number of states can be infinite. This issue
+	is solved by \emph{Hilbert space} ($ \mathcal{H} $).
+
+	\noindent Although some positions can be more or less likely,
+	position, as a whole, is not discrete (as far as we know).
+	Let's say, the quantum state of a particle is the linear combination
+	of position kets. As position is continuous, the linear combination
+	is the integral from $ -\infty $ to $ +\infty $.
+
+	\begin{equation}
+		\ket{\psi} = \int_{-\infty}^{+\infty} dx \cdot \psi(x) \cdot \ket{x}
+		\label{eq:2}
+	\end{equation}
+
+	\noindent So, a wavefunction is a continuous list of coefficients whenever
+	the list of kets in infinite.
+
+	\section{Hilbert space}
+	\noindent We know that, quantum state of a particle is the linear combination
+	of its states where the coefficient function is the wave function of the
+	particle.
+
+	\begin{equation}
+		\ket{\psi} = \sum_{i=1}^{n} c_i \cdot \ket{E_i}
+		\label{eq:3}
+	\end{equation}
+
+	\noindent But this $ n $ can be infinite as well. If $ n $
+	is infinite, things get problematic.
+
+	\subsection{Problem with infinite sum}
+	\noindent Let's consider the basis vector to be the set of all polynomials
+	$ {1, x, x^2, x^3,\dots} $. Now, let's consider an infinite linear combination
+	of elements of this set (i.e., infinite linear combination of the basis
+	vectors), $ 1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \dots $, which clearly
+	is $ e^x $.
+
+	\begin{equation}
+		e^x = 1 + x + \frac{x^2}{2!} + \frac{x^3}{3!} + \dots
+		\label{eq:4}
+	\end{equation}
+
+	\noindent But the problem is, this $ e^x $ is outside of the set of basis
+	vectors that constitute it. So, infinitely combining the basis vectors linearly
+	gives us something outside of the set of basis vectors. So, if our quantum
+	state ($ \ket{\psi(x)} $) is an infinite superposition of outcome states
+	($ \{\ket{E_i}\} $ or $ \{\ket{P_i}\} $), then there's a chance that this quantum state is
+	outside of our vector space, therefore, not a quantum state at all. 
+
+	\subsection{Solution}
+
+	\noindent Let's apply an extra following rule to our vector space,
+	\begin{center}
+		\emph{Every convergent sum of vectors must converge to an element inside
+		of the vector space.}
+	\end{center}
+
+	\noindent If this rule is applied (along with all the rules of a vector space), then
+	the resulting space is called a \emph{Hilbert} space $ \mathcal{H} $. The rigorous 
+	definition of a \emph{Hilbert} space is,
+
+	\begin{center}
+		\emph{\textbf{Hilbert Space: } A vector space equipped with an \emph{inner product}
+		that is \emph{Cauchy complete}}.
+	\end{center}
+
+	\noindent Cauchy completeness (or complete metric space) is defined as follows,
+
+	\begin{center}
+		\emph{Every convergent sequence (or sum) of vectors (e.g., partial sums
+		of infinite linear combination) converges to an element inside of the
+		vector space}
+	\end{center}
+
+	\noindent So,
+	\begin{equation}
+		\ket{\psi} \in \mathcal{H}
+		\label{eq:5}
+	\end{equation}
+
+	\noindent For the time being, inner product can be thought of as being the dot
+	product.
+
+	\section{Inner product}
+	\noindent At its core, an \emph{inner product} takes in two vectors and outputs
+	a number which might be complex,
+	\begin{equation}
+		\innerp{\psi}{\phi} = c\notag
+	\end{equation}
+	\noindent $ \innerp{\psi}{\phi} $ is the inner product of kets. There are
+	a few rules for kets,
+	
+	\begin{align*}
+	\begin{split}
+		\ket{\phi} + \ket{\psi} &= \ket{\phi + \psi} \\
+		a \ket{\psi} &= \ket{a \psi} \\
+		\innerp{\psi}{\phi + \zeta} &= \innerp{\psi}{\phi} + \innerp{\psi}{\zeta} \\
+		\innerp{\phi}{a \psi} &= a \innerp{\phi}{\psi} 
+	\end{split}
+	\end{align*}
+
+	\noindent The last two rules state that, the inner product should be linear in the
+	right hand position. Magnitude of a ket is $ \abs{\innerp{\phi}{\phi}} $, and it is
+	\emph{positive}.
+
+	\noindent All the rules stated above are intuitive from dot product. But
+	the \emph{commutative} law does not hold for the inner product, which can be proved
+	through contradiction. 
+
+	\noindent Let's assume that the inner product is indeed commutative and the magnitude
+	is positive.
+	
+	\begin{align*}
+		\innerp{i\phi}{i\phi} = i\innerp{i\phi}{\phi} = i\innerp{\phi}{i\phi} \\
+			= i^2 \innerp{\phi}{\phi} = - \innerp{\phi}{\phi}
+	\end{align*}
+	\noindent Which results in the magnitude of the ket $ \abs{\ket{i \phi}} = i \abs{\ket{\phi}} $. This
+	cannot happen (apparantly, the magnitude should not be complex). That is why, the
+	inner product is not communtative. Rather the following rule applies,
+
+	\begin{align*}
+		\innerp{\psi}{\phi} = \innerp{\phi}{\psi}^*
+	\end{align*}
+
+	\noindent which solves the previous problem.
+
+	\vspace{0.5cm}
+
+	\noindent One final rule is, only the zero vector has zero length. So, the inner product
+	definition is as follows,
+
+	\begin{center}
+		\emph{An inner product $ \innerp{\psi}{\phi} $ is a map from vectors
+		to scalars which satisfies the following rules,}
+	\end{center}
+
+	\begin{align*}
+	\begin{split}
+		\innerp{\psi}{\zeta + \phi} &= \innerp{\psi}{\zeta} + \innerp{\psi}{\phi} \\
+		\innerp{\psi}{a \phi} &= a \innerp{\psi}{\phi} \\
+		\innerp{\psi}{\phi} &= \innerp{\phi}{\psi}^* \\
+		\text{for} \ket{\psi} &\neq 0, \innerp{\psi}{\psi} > 0 \\
+	\end{split}
+	\end{align*}
+
+\end{document}

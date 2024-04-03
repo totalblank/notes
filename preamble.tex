@@ -18,12 +18,24 @@
 \usepackage{pgfplots}
 \usepackage{bm}
 \usepackage{float}
+\usepackage{physics}
+% Quantum physics inner product
+\newcommand{\innerp}[2]{\left\langle #1 \vert #2 \right\rangle}
 
 %%%  \begin{figure}[htp]
 %%%  	\centering
 %%%  	\includegraphics[width=0.25\textwidth]{/path/to/image}
 %%%  	\caption{}\label{fig:}
 %%%  \end{figure}
+
+% to write multiple lines of equations
+
+%%  \begin{align*}
+%%  \begin{split}
+%%  	\ket{\phi} + \ket{\psi} &= \ket{\phi + \psi} \\
+%%  	a \ket{\psi} &= \ket{a \psi}
+%%  \end{split}
+%%  \end{align*}
 
 \usepackage{listings}
 \lstset{showstringspaces=false} % pretty embeded code in LaTeX
