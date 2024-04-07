@@ -32,6 +32,38 @@
 	\noindent \textbf{Solution: }
 	\lstinputlisting[language=C++]{./ABC_347/B.cpp}
 
+	\subsection{Task C - Ideal Holidays}
+	\noindent \textbf{Problem statement: } In the kingdom of AtCoder,
+	a week consists of $ A + B $ days, with the first through A-th
+	days being holidays and the $ (A+1) $-th through $ (A+B) $-th
+	being weekdays.
+
+	\noindent Takahashi has $ N $ plans, and the $ i $-th plan is
+	scheduled $ D_i $ days later.
+
+	\noindent He has forgotten what day of the week it is today.
+	Determine if it is possible for all of his $ N $ plans to be
+	scheduled on holidays.
+
+	\vspace{0.5cm}
+	\noindent \textbf{Constraints: }
+	\begin{itemize}
+		\item $ 1 \leq N \leq 2\e{5} $
+		\item $ 1 \leq A, B \leq \e{9} $
+		\item $ 1 \leq D_1 < D_2 < \dots < D_N \leq \e{9} $
+	\end{itemize}
+	\vspace{0.5cm}
+	\noindent \textbf{Solution: }
+	\lstinputlisting[language=C++]{./ABC_347/C.cpp}
+
+	\noindent The method lower\_bound(first, last, val) in C++ is used to return 
+	an iterator pointing to the first element in the range [first, last) which has 
+	value not less than val. So, the function returns an iterator pointing to the
+	next smallest number just greater than or equal to that number. If there are multiple
+	values that are equal to val, lower\_bound() returns the iterator of the first such
+	value. It operates on \emph{sorted} vector. The first two arguments are iterators. The
+	return value of lower\_bound() is an iterator to the 
+
 	\section{Atcoder Regular Contest 175}
 	\subsection{Task A - Spoon Taking Problem}
 
