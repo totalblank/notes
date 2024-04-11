@@ -393,4 +393,31 @@ history_df.loc[:, ['loss', 'val_loss']].plot();
 print("Minimum validation loss: {}".format(history_df['val_loss'].min()))
 \end{lstlisting}
 
+\subsection{Dropout and batch normalization}
+\noindent \emph{Dropout} can help correct overfitting. Overfitting is caused by the network
+learning spurious patterns in the training data. To recognize these spurious patterns, a
+network will often rely on a very specific combinations of weight, a kind of "conspiracy"
+of weights. Being so specific, they tend to be fragile: remove one and the conspiracy falls
+apart. This is the idea behind \textbf{dropout} -- to break up these conspiracies. Some
+fraction of a layer's input units is dropped in every step of training, making it much harder
+to learn those spurious patterns in the training data. Instead, it has to search for broad,
+general patterns, whose weight patterns tend to be more robust. Dropout can also be thought
+of as being an ensemble of networks. The predictions will no longer be made by one big
+network, but instead by a committe of smaller networks.
+
+\begin{figure}[htp]
+	\centering
+	\animategraphics[width=0.5\textwidth, autoplay, loop]{5}{../assets/machine_learning_random/dropout_layer-}{0}{15}
+	\caption{Here, 50\% dropout has been added between the two hidden layers.}
+\end{figure}
+
+\begin{lstlisting}[language=Python]
+keras.Sequential([
+    # ...
+    layers.Dropout(rate=0.3), # apply 30% dropout to the next layer
+    layers.Dense(16),
+    # ...
+])
+\end{lstlisting}
+
 \end{document}
