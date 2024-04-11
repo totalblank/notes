@@ -8,6 +8,22 @@
 \maketitle
 
 \section{Section 1}
+\noindent The linear unit works as follows in Keras,
+
+\begin{figure}[htp]
+	\centering
+	\includegraphics[width=0.3\textwidth]{../assets/machine_learning_random/the_linear_unit.png}
+	\caption{The linear unit: $ y = wx + b $.}
+\end{figure}
+
+\begin{figure}[htp]
+	\centering
+	\includegraphics[width=0.3\textwidth]{../assets/machine_learning_random/a_linear_unit_with_multiple_inputs.png}
+	\caption{A linear unit with three inputs - $ y = w_0 x_0 + w_1 x_1 + w_2 x_2 + b $}
+\end{figure}
+
+\pagebreak
+
 % Using TensorFlow keras
 \begin{lstlisting}[language=Python]
 from tensorflow import keras
@@ -19,7 +35,7 @@ model = keras.Sequential([
 ])
 \end{lstlisting}
 
-\noindent keras\.Sequential creates a neural network as a stack
+\noindent keras.Sequential creates a neural network as a stack
 of layers. The above example defines a model accepting three input
 features and producing a single output. The first argument units
 define how many outputs we want. The second argument input\_shape
@@ -47,8 +63,8 @@ convolution, recurrence).
 
 \subsection{The activation function}
 \noindent It turns out that two dense layers with nothing in between
-are no better than a single dense layer by itself. Dense layers by
-themselves can never move us out of the world of lines and planes. 
+are no better than a single dense layer by itself. \emph{Dense layers by
+themselves can never move us out of the world of lines and planes.}
 An activation function brings non-linearity to the model. An 
 \textbf{activation function} is simply some function that is applied to
 each of a layer's outputs (its activations). The most common is the
@@ -282,11 +298,11 @@ in the curves. The size of the gap tells us how much noise the model has learned
 	\item \textbf{Underfitting} the training set is when the loss is not as
 		low as it could be because the model hasn't learned enough \emph{signal.}
 	\item \textbf{Overfitting} the training set is when the loss is not as low
-		as it could be because the model learned too much noise.
+		as it could be because the model learned too much \emph{noise.}
 \end{itemize}
 
-\noindent A model's \textbf{capacity} refers to the size and complexity of the patterns
-it is able to learn,
+\noindent A model's \emph{capacity} refers to the \textbf{size} and \textbf{capacity} of the
+patterns it is able to learn,
 \begin{itemize}
 	\item Wider neural network -- more units to existing layers. Learns linear
 		relationships easily
@@ -299,5 +315,82 @@ it is able to learn,
 	\includegraphics[width=0.5\textwidth]{../assets/machine_learning_random/early_stopping.png}
 	\caption{We keep the model where the validation loss is at a minimum - early stopping}
 \end{figure}
+
+\noindent Once we detect that the validation loss is starting to rise again, we can reset
+the weights back to where the minimum occured. This is called \emph{early stopping}. In
+Keras, early stopping can be included through a callback. A callback is a function that is
+run every so often while the network trains. The early stopping callback will run after
+every epoch.
+
+\begin{lstlisting}[language=Python]
+from tensorflow.keras.callbacks import EarlyStopping
+
+early_stopping = EarlyStopping(
+    min_delta=0.001, # minimium amount of change to count as an improvement
+    patience=20, # how many epochs to wait before stopping
+    restore_best_weights=True,
+)
+\end{lstlisting}
+
+\noindent These parameters say: "If there hasn't been at least an improvement of $ 0.001 $
+in the validation loss over the previous 20 epochs, then stop the training and keep the best
+model you found."
+
+\vspace{0.5cm}
+\noindent Train a neural network,
+
+\begin{lstlisting}[language=Python]
+import pandas as pd
+from tensorflow import keras
+from tensorflow.keras import layers, callbacks
+
+red_wine = pd.read_csv('../input/dl-course-data/red-wine.csv')
+
+# Create training and validation splits
+df_train = red_wine.sample(frac=0.7, random_state=0)
+df_valid = red_wine.drop(df_train.index)
+
+# Scale to [0, 1]
+max_ = df_train.max(axis=0)
+min_ = df_train.min(axis=0)
+df_train = (df_train - min_) / (max_ - min_)
+df_valid = (df_valid - min_) / (max_ - min_)
+
+# Split features and target
+X_train = df_train.drop('quality', axis=1)
+X_valid = df_valid.drop('quality', axis=1)
+y_train = df_train['quality']
+y_valid = df_valid['quality']
+
+
+early_stopping = callbacks.EarlyStopping(
+    min_delta=0.001, # minimium amount of change to count as an improvement
+    patience=20, # how many epochs to wait before stopping
+    restore_best_weights=True,
+)
+
+model = keras.Sequential([
+    layers.Dense(512, activation='relu', input_shape=[11]),
+    layers.Dense(512, activation='relu'),
+    layers.Dense(512, activation='relu'),
+    layers.Dense(1),
+])
+model.compile(
+    optimizer='adam',
+    loss='mae',
+)
+history = model.fit(
+    X_train, y_train,
+    validation_data=(X_valid, y_valid),
+    batch_size=256,
+    epochs=500,
+    callbacks=[early_stopping], # put your callbacks in a list
+    verbose=0,  # turn off training log
+)
+
+history_df = pd.DataFrame(history.history)
+history_df.loc[:, ['loss', 'val_loss']].plot();
+print("Minimum validation loss: {}".format(history_df['val_loss'].min()))
+\end{lstlisting}
 
 \end{document}
