@@ -405,12 +405,6 @@ general patterns, whose weight patterns tend to be more robust. Dropout can also
 of as being an ensemble of networks. The predictions will no longer be made by one big
 network, but instead by a committe of smaller networks.
 
-\begin{figure}[htp]
-	\centering
-	\animategraphics[width=0.5\textwidth, autoplay, loop]{5}{../assets/machine_learning_random/dropout_layer-}{0}{15}
-	\caption{Here, 50\% dropout has been added between the two hidden layers.}
-\end{figure}
-
 \begin{lstlisting}[language=Python]
 keras.Sequential([
     # ...
@@ -418,6 +412,195 @@ keras.Sequential([
     layers.Dense(16),
     # ...
 ])
+\end{lstlisting}
+
+\pagebreak
+
+\begin{figure}[htp]
+	\centering
+	\animategraphics[width=0.5\textwidth, autoplay, loop]{5}{../assets/machine_learning_random/dropout_layer-}{0}{15}
+	\caption{Here, 50\% dropout has been added between the two hidden layers.}
+\end{figure}
+
+
+\noindent \emph{Batch normalization} can help correct training that is slow or unstable. It
+is a good idea to put all of the data on a common scale because SGD will shift the network
+weights in proportion to how large an activation the data produces. Features that tend to
+produce activations of very different sizes can make for unstable training behavior.
+\textbf{Batch normalization layer} normalizes inside the network. A batch normalization layer
+looks at each batch as it comes in, first normalizing the batch with its own mean and
+standard deviation, and then also putting the data on a new scale with two trainable
+rescaling parameters. Batchnorm, in effect, performs a kind of co-ordinated rescaling of its
+inputs. 
+\begin{itemize}
+	\item Models with batchnorm tend to need fewer epochs to complete training
+	\item Batchnorm is added as an aid to the optimizaiton process (though it can
+		sometimes also help prediction performance)
+	\item Batchnorm can fix various problems that can cause the training to get stuck
+\end{itemize}
+
+\begin{lstlisting}
+# after a layer
+layers.Dense(16, activation='relu'),
+layers.BatchNormalization(),
+
+# between a layer and its activation function
+layers.Dense(16),
+layers.BatchNormalization(),
+layers.Activation('relu'),
+\end{lstlisting}
+
+\vspace{0.5cm}
+
+\noindent Using dropout and batch normalization,
+
+\begin{lstlisting}
+# Setup plotting
+import matplotlib.pyplot as plt
+
+from tensorflow import keras
+from tensorflow.keras import layers
+
+plt.style.use('seaborn-whitegrid')
+# Set Matplotlib defaults
+plt.rc('figure', autolayout=True)
+plt.rc('axes', labelweight='bold', labelsize='large',
+       titleweight='bold', titlesize=18, titlepad=10)
+
+
+import pandas as pd
+red_wine = pd.read_csv('../input/dl-course-data/red-wine.csv')
+
+# Create training and validation splits
+df_train = red_wine.sample(frac=0.7, random_state=0)
+df_valid = red_wine.drop(df_train.index)
+
+# Split features and target
+X_train = df_train.drop('quality', axis=1)
+X_valid = df_valid.drop('quality', axis=1)
+y_train = df_train['quality']
+y_valid = df_valid['quality']
+
+model = keras.Sequential([
+    layers.Dense(1024, activation='relu', input_shape=[11]),
+    layers.Dropout(0.3),
+    layers.BatchNormalization(),
+    layers.Dense(1024, activation='relu'),
+    layers.Dropout(0.3),
+    layers.BatchNormalization(),
+    layers.Dense(1024, activation='relu'),
+    layers.Dropout(0.3),
+    layers.BatchNormalization(),
+    layers.Dense(1),
+])
+model.compile(
+    optimizer='adam',
+    loss='mae',
+)
+
+history = model.fit(
+    X_train, y_train,
+    validation_data=(X_valid, y_valid),
+    batch_size=256,
+    epochs=100,
+    verbose=0,
+)
+
+
+# Show the learning curves
+history_df = pd.DataFrame(history.history)
+history_df.loc[:, ['loss', 'val_loss']].plot()
+\end{lstlisting}
+
+\subsection{Binary classification}
+\noindent The main difference is in the loss function we use and in what kind of outputs we
+want the final layer to produce.
+
+\noindent \textbf{Accuracy} is one of the many metrics in use for measureing success on a
+classification problem. Accuracy is the ratio of correct predictions to total predictions,
+
+\begin{equation}
+	accuracy = \frac{number\_correct}{total}
+	\label{eq:1}
+\end{equation}
+\noindent The problem with accuracy (and most other classification metrics) is that it can't
+be used as a loss function. SGD needs a loss function that changes smoothly, but accuracy,
+being a ratio of counts, changes in ``jumps". So, a substitute is chosen to act as the loss
+function. This substitute is the \emph{cross-entropy} function.
+
+\noindent The loss function defines the objective of the network during training. With
+regression, the goal was to minimize the distance between the expected outcome and the 
+predicted outcome. MAE was chosen to measure this distance. For classification, what is
+wanted instead is a distance between \emph{probabilities}, and this is what cross-entropy
+provides. \textbf{Cross-entropy} is a sort of measure for the distance from one probability
+distribution to another. The idea is that we want our network to predict the correct class
+with probability 1.0. The further away the predicted probability is from 1.0, the greater
+will be the cross-entropy loss.
+
+\vspace{0.5cm}
+
+\noindent Binary classification,
+
+\begin{lstlisting}[language=Python]
+import pandas as pd
+from tensorflow import keras
+from tensorflow.keras import layers
+
+ion = pd.read_csv('../input/dl-course-data/ion.csv', index_col=0)
+
+df = ion.copy()
+df['Class'] = df['Class'].map({'good': 0, 'bad': 1})
+
+df_train = df.sample(frac=0.7, random_state=0)
+df_valid = df.drop(df_train.index)
+
+max_ = df_train.max(axis=0)
+min_ = df_train.min(axis=0)
+
+df_train = (df_train - min_) / (max_ - min_)
+df_valid = (df_valid - min_) / (max_ - min_)
+df_train.dropna(axis=1, inplace=True) # drop the empty feature in column 2
+df_valid.dropna(axis=1, inplace=True)
+
+X_train = df_train.drop('Class', axis=1)
+X_valid = df_valid.drop('Class', axis=1)
+y_train = df_train['Class']
+y_valid = df_valid['Class']
+
+model = keras.Sequential([
+    layers.Dense(4, activation='relu', input_shape=[33]),
+    layers.Dense(4, activation='relu'),    
+    layers.Dense(1, activation='sigmoid'),
+])
+model.compile(
+    optimizer='adam',
+    loss='binary_crossentropy',
+    metrics=['binary_accuracy'],
+)
+early_stopping = keras.callbacks.EarlyStopping(
+    patience=10,
+    min_delta=0.001,
+    restore_best_weights=True,
+)
+
+history = model.fit(
+    X_train, y_train,
+    validation_data=(X_valid, y_valid),
+    batch_size=512,
+    epochs=1000,
+    callbacks=[early_stopping],
+    verbose=0, # hide the output because we have so many epochs
+)
+
+history_df = pd.DataFrame(history.history)
+# Start the plot at epoch 5
+history_df.loc[5:, ['loss', 'val_loss']].plot()
+history_df.loc[5:, ['binary_accuracy', 'val_binary_accuracy']].plot()
+
+print(("Best Validation Loss: {:0.4f}" +\
+      "\nBest Validation Accuracy: {:0.4f}")\
+      .format(history_df['val_loss'].min(), 
+              history_df['val_binary_accuracy'].max()))
 \end{lstlisting}
 
 \end{document}
