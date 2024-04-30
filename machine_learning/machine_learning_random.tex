@@ -7,7 +7,8 @@
 \begin{document}
 \maketitle
 
-\section{Section 1}
+\section{Intro to Deep Learning}
+\subsection{A single neuron}
 \noindent The linear unit works as follows in Keras,
 
 \begin{figure}[htp]
@@ -418,7 +419,7 @@ keras.Sequential([
 
 \begin{figure}[htp]
 	\centering
-	\animategraphics[width=0.5\textwidth, autoplay, loop]{5}{../assets/machine_learning_random/dropout_layer-}{0}{15}
+	\animategraphics[width=0.5\textwidth, autoplay, loop, controls]{5}{../assets/machine_learning_random/dropout_layer-}{0}{15}
 	\caption{Here, 50\% dropout has been added between the two hidden layers.}
 \end{figure}
 
@@ -603,7 +604,47 @@ print(("Best Validation Loss: {:0.4f}" +\
               history_df['val_binary_accuracy'].max()))
 \end{lstlisting}
 
-\section{Digit recognizer}
+\pagebreak
 
+\section{Computer vision}
+
+\subsection{Convolution}
+\begin{equation}
+	\convolution{f}{g} (t) = \int_{-\infty}^{+\infty} f(\tau) g(t - \tau) d \tau
+	\label{eq:2}
+\end{equation}
+
+\noindent \emph{Convolution} is the integral of the product of the two functions
+after one is reflected about the $ y $ axis and shifted. The integral is evaluated
+for all values of shift, producing the convolution function. It expresses how the shape
+of one function is modified by the other. At each $ t $ the convolution formula can be
+described as area under the function $ f(\tau) $ weighted by the function $ g(-\tau) $
+shifted by amount $ t $.
+
+\vspace{0.5cm}
+
+\begin{figure}[htp]
+	\centering
+	\includegraphics[width=0.8\textwidth]{../assets/machine_learning_random/Convolution.png}
+	\caption{}
+\end{figure}
+
+\begin{itemize}
+	\item Express each function in terms of a dummy variable $ \tau $.
+	\item Reflect one of the functions: $ g(\tau) \rightarrow g(-\tau) $.
+	\item Add a time-offset $ t $, which allows $ g(-\tau) $ to slide along the
+		$ \tau $-axis. If $ t $ is a positive value, then $ g(t-\tau) $ is
+		equal to $ g(-\tau) $ that slides or is shifted along the $ \tau $-axis
+		toward the right (toward $ +\infty) $ by the amount of $ t $. If t is a
+		negative value, then $ g(t-\tau) $ is equal to $ g(-\tau) $ that slides
+		or is shifted towards the left (towards $ -\infty $) by the amount of
+		$ \abs{t} $.
+	\item Start $ t $ at $ -\infty $ and slide it all the way to $ +\infty $.
+		Wherever the two functions intersect, find the integral of their product.
+		In other words, at time $ t $, compute the area under the function
+		$ f(\tau) $ weighted by the weighting function $ g(t-\tau) $.
+\end{itemize}
+
+\animategraphics[loop, autoplay, controls, width=0.8\textwidth]{150}{../assets/machine_learning_random/Convolution_of_box_signal_with_itself-}{0}{300}
 
 \end{document}

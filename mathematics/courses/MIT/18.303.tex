@@ -315,4 +315,42 @@
     	\label{eq:7}
     \end{equation}
 
+    \subsection{L 03 - Finite difference methods and accuracy}
+    \noindent Finite differences are used to approximate derivative. There are three kinds
+    of finite differences,
+    \begin{itemize}
+    	\item Forward difference
+	\item Backward difference
+	\item Center difference (best among all three)
+    \end{itemize}
+
+    \vspace{0.5cm}
+    \noindent Forward difference,
+    \begin{equation}
+	    u'(x) \approx \frac{u(x+\Delta x) - u(x)}{\Delta x)}
+    	\label{eq:8}
+    \end{equation}
+
+    \vspace{0.5cm}
+    \noindent Backward difference,
+    \begin{equation}
+	    u'(x) \approx \frac{u(x) - u(x - \Delta x)}{\Delta x)}
+    	\label{eq:9}
+    \end{equation}
+
+    \vspace{0.5cm}
+    \noindent Backward difference,
+    \begin{equation}
+	    u'(x) \approx \frac{u(x+\Delta x) - u(x-\Delta x)}{2 \Delta x)}
+    	\label{eq:10}
+    \end{equation}
+
+    \noindent All three are numerical methods. The key questions are,
+    \begin{itemize}
+    	\item How big is the error from a non-zero $ \Delta x $?
+	\item How fast does the error vanish as $ \Delta x \to 0 $?
+	\item How do the answers depend on the difference approximation, and how can we
+		analyze and design these approximations?
+    \end{itemize}
+
 \end{document}
