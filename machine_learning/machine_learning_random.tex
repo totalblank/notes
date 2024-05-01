@@ -645,6 +645,79 @@ shifted by amount $ t $.
 		$ f(\tau) $ weighted by the weighting function $ g(t-\tau) $.
 \end{itemize}
 
-\animategraphics[loop, autoplay, controls, width=0.8\textwidth]{150}{../assets/machine_learning_random/Convolution_of_box_signal_with_itself-}{0}{300}
+
+
+\begin{figure}[htp]
+	\centering
+	\animategraphics[loop, autoplay, width=0.8\textwidth]{15}{../assets/machine_learning_random/Convolution_of_box_signal_with_itself-}{0}{300}
+	\caption{Convolution of box signal with itself}
+\end{figure}
+
+\subsection{The convolutional classifier}
+\noindent CNN are great at computer vision. CNN are also used in,
+\begin{itemize}
+	\item Generative Adversarial Networks (GAN)
+	\item Image segmentation
+\end{itemize}
+
+\noindent A convnet used for image classification has two parts,
+\begin{itemize}
+	\item \emph{Convolutional base} - is used to extract the features from an image. The convolutional
+		base is formed primarily of layers performing the convolution operation.
+	\item \emph{Dense head} - is used to \textbf{determine the class} of the image. The dense head is
+		formed primarily of dense layers.
+\end{itemize}
+
+\begin{figure}[htp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{../assets/machine_learning_random/convnet_high_level_view.png}
+	\caption{The convolutional classifier}
+\end{figure}
+
+\pagebreak
+
+\begin{figure}[htp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{../assets/machine_learning_random/conv_base__dense_head.png}
+	\caption{Feature extraction and classification}
+\end{figure}
+
+\noindent The goal of the network during training is to learn two things, 
+\begin{itemize}
+	\item which features to extract (perfomed in base)
+	\item which class goes with what features (perfomed in head)
+\end{itemize}
+
+\noindent Most often, the base of pretrained models is reused. To the pretrained base, an untrained
+head is attached. So before training, the CNN can already extract features from images. When an
+untrained head is attached to it and trained, it can learn to perform the current task.
+Because the head usually consists of only a few dense layers, very accurate classifiers can be 
+created from relatively little data.
+
+\lstinputlisting{../assets/machine_learning_random/scripts/convnet_training.py}
+
+\subsection{Convolution and ReLU}
+\noindent Two most important types of layers that can be found in the \textbf{base} of a convolutional
+image classifier,
+\begin{itemize}
+	\item convolutional layer with ReLU activation
+	\item Maximum pooling layer
+\end{itemize}
+
+\noindent As the activation layers can be a separate layer, \emph{convolution}, \emph{ReLU}, and
+\emph{maximum pooling} are used to extract features in the base.
+
+\noindent The feature extraction performed by the base has three operations,
+\begin{itemize}
+	\item \emph{Filter} - an image for a particular feature (convolution)
+	\item \emph{Detect} - the feature within the filtered image
+	\item \emph{Condense} - the image to enhance the feature
+\end{itemize}
+
+\begin{figure}[htp]
+	\centering
+	\includegraphics[width=0.7\textwidth]{../assets/machine_learning_random/3_steps_of_feature_extraction.png}
+	\caption{Feature extraction and classification}
+\end{figure}
 
 \end{document}
