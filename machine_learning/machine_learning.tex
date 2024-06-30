@@ -1,0 +1,143 @@
+\input{../preamble.tex}
+
+\title{Machine Learning}
+\author{Aheer Srabon}
+
+\begin{document}
+\maketitle
+
+\section*{Learning}
+
+\subsection*{Dimensionality Reduction}
+\noindent \textbf{Data Compression: } Reduce data from 2D to 1D,
+or reduce data from 3D to 2D. Reduces the number of features
+that the data has.
+\begin{itemize}
+\itemsep0em
+	\item Saves storage space
+	\item Makes the learning algorithm run faster (important)
+\end{itemize}
+\vspace{0.5em}
+\noindent A dataset which has a huge number of features make the
+learning algorithm run very slow. That is why, PCA is applied to
+keep the data while discarding less important data of the data.
+
+\vspace{0.5cm}
+
+\noindent \textbf{Data Visualization: } It may be often insightful
+to see the data visually. But higher dimensional data can't be
+seen by human beings. That is why, PCA is applied to better observe
+the data visually.
+
+\subsection*{Principal Component Analysis (PCA)}
+
+\noindent \textbf{Problem formulation: } Find $ k $ vectors 
+$ u^{(1)}, u^{(2)}, ... , u^{(k)} $ onto which to project the data, so
+as to  minimize the \textbf{projection error}.
+
+\vspace{0.3cm}
+
+\noindent Informally, project the data onto the linear subspace,
+spanned by the $ k $ vectors $ u^{(1)}, u^{(2)}, ... , u^{(k)} $.
+
+\vspace{0.5cm}
+
+\begin{figure}[htp]
+	\centering
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.85\linewidth]{./assets/linear_regression.png}
+		\caption{Linear regression (minimize squared distances)}
+	\end{subfigure}%
+	\begin{subfigure}{.5\textwidth}
+		\centering
+		\includegraphics[width=.85\linewidth]{./assets/pca.png}
+		\caption{PCA (minimize squared distances)}
+	\end{subfigure}
+	\caption{Linear regression vs PCA}
+\end{figure}
+
+\vspace{0.5cm}
+
+\noindent Let the training data be, $ x^{(1)}, x^{(2)}, ... , x^{(m)} $
+
+\noindent \textbf{Data preprocessing: }
+\vspace{0.3cm}
+\noindent\emph{Mean normalization: } 
+
+\noindent Calculate mean of $ i $th feature of the data set,
+\begin{equation}
+	\mu^{(i)} = \frac{1}{m} \sum_{j=1}^{m} x_j^{(i)}
+\end{equation}
+
+\begin{equation}
+	x^{(i)} \leftarrow x^{(i)} - \mu^{(i)} 
+\end{equation}
+
+
+\noindent\emph{Feature scaling: }
+\begin{equation}
+	x^{(i)} \leftarrow \frac{x^{(i)} - \mu^{(i)}}{S^{(i)}}
+\end{equation}
+
+\noindent Here, $ S^{(i)} $ is a measure of variation in the data of $ i $
+th feature. Mostly, it is set to be the standard deviation of the data.
+
+\vspace{0.5cm}
+
+\noindent \textbf{Principal component analysis (Algorithm): }
+\noindent The data is stored in a matrix $ x \in \mathbb{R}^{m \times n} $, where
+each row represents a certain point in the data space (a reading), and each column
+represents one feature. So there are $ m $ readings and $ n $ features.
+
+\vspace{0.3cm}
+
+\noindent \emph{Step 1:} Compute the covariance matrix,
+\begin{equation}
+	\Sigma = \frac{1}{m} \sum_{i=1}^{n} (x^{(i)}) (x^{(i)})^T; 
+	\hspace{1cm} (\Sigma \in \mathbb{R}^{n \times n})
+\end{equation}
+
+\vspace{0.25cm}
+
+\noindent \emph{Matlab specific implemementation:} $ Sigma = \frac{1}{m} (X' X) $
+
+\vspace{0.5cm}
+
+\noindent \emph{Step 2:} Find the eigenvectors of the covariance matrix,
+\begin{center}
+	[U, S, V] = svd(Sigma)
+\end{center}
+
+\noindent Here, $ U $ is the matrix whose columns are the eigenvectors of the matrix $ \Sigma $.
+$ U \in \mathbb{R}^{(n \times n)} $
+
+\vspace{0.5cm}
+
+\noindent \emph{Step 3:} Take the first $ k $ columns of the eigenvector matrix $ (U) $ and call
+it $ U_{reduced} $. 
+
+\noindent $ U_{reduced} \in \mathbb{R}^{(n \times k)} $
+
+\vspace{0.25cm}
+
+\noindent \emph{Matlab specific implemementation:} Ureduce = U(:, 1:k)
+
+\vspace{0.5cm}
+
+\noindent \emph{Step 4:} Multiply each example $ x^{(i)} $ with $ u_{reduced} $ to get the reduced
+version of the example. For a column vector example $ x \in \mathbb{R}^{(n \times 1)} $ which has 
+$ n $ entries as values of its $ n $ features, its reduced form can be found with the following equation,
+
+\begin{equation}
+	z = U_{reduced}' x
+\end{equation}
+
+\vspace{0.25cm}
+
+\noindent \emph{Matlab specific implemementation:} $ Z = X * U_{reduced} $.
+Here, $ X \in \mathbb{R}^{(m \times n)} $, $ U_{reduced} \in \mathbb{R}^{(n \times k)} $. So,
+$ Z \in \mathbb{R}^{(m \times k)} $. The number of columns got reduced from $ n $ to $ k $, which
+indicates reduction in dimensions of the data.
+
+\end{document}
