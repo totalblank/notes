@@ -86,13 +86,13 @@ th feature. Mostly, it is set to be the standard deviation of the data.
 \vspace{0.5cm}
 
 \noindent \textbf{Principal component analysis (Algorithm): }
-\noindent The data is stored in a matrix $ x \in \mathbb{R}^{m \times n} $, where
+\noindent The data is stored in a matrix $ X \in \mathbb{R}^{m \times n} $, where
 each row represents a certain point in the data space (a reading), and each column
 represents one feature. So there are $ m $ readings and $ n $ features.
 
 \vspace{0.3cm}
 
-\noindent \emph{Step 1:} Compute the covariance matrix,
+\noindent \textbf{Step 1:} Compute the covariance matrix,
 \begin{equation}
 	\Sigma = \frac{1}{m} \sum_{i=1}^{n} (x^{(i)}) (x^{(i)})^T; 
 	\hspace{1cm} (\Sigma \in \mathbb{R}^{n \times n})
@@ -104,7 +104,7 @@ represents one feature. So there are $ m $ readings and $ n $ features.
 
 \vspace{0.5cm}
 
-\noindent \emph{Step 2:} Find the eigenvectors of the covariance matrix,
+\noindent \textbf{Step 2:} Find the eigenvectors of the covariance matrix,
 \begin{center}
 	[U, S, V] = svd(Sigma)
 \end{center}
@@ -114,7 +114,7 @@ $ U \in \mathbb{R}^{(n \times n)} $
 
 \vspace{0.5cm}
 
-\noindent \emph{Step 3:} Take the first $ k $ columns of the eigenvector matrix $ (U) $ and call
+\noindent \textbf{Step 3:} Take the first $ k $ columns of the eigenvector matrix $ (U) $ and call
 it $ U_{reduced} $. 
 
 \noindent $ U_{reduced} \in \mathbb{R}^{(n \times k)} $
@@ -125,13 +125,17 @@ it $ U_{reduced} $.
 
 \vspace{0.5cm}
 
-\noindent \emph{Step 4:} Multiply each example $ x^{(i)} $ with $ u_{reduced} $ to get the reduced
+\noindent \textbf{Step 4:} Multiply each example $ x^{(i)} $ with $ u_{reduced} $ to get the reduced
 version of the example. For a column vector example $ x \in \mathbb{R}^{(n \times 1)} $ which has 
-$ n $ entries as values of its $ n $ features, its reduced form can be found with the following equation,
+$ n $ entries as values of its $ n $ features (notice that the bias is not included), its reduced
+form can be found with the following equation,
 
 \begin{equation}
 	z = U_{reduced}' x
 \end{equation}
+
+\noindent Originally, $ x \in \mathbb{R}^{(n \times 1)} $. The reduced form of $ x $ is
+$ z \in \mathbb{R}^{(k \times 1)} $.
 
 \vspace{0.25cm}
 
@@ -139,5 +143,64 @@ $ n $ entries as values of its $ n $ features, its reduced form can be found wit
 Here, $ X \in \mathbb{R}^{(m \times n)} $, $ U_{reduced} \in \mathbb{R}^{(n \times k)} $. So,
 $ Z \in \mathbb{R}^{(m \times k)} $. The number of columns got reduced from $ n $ to $ k $, which
 indicates reduction in dimensions of the data.
+
+\noindent \textbf{Reconstruction from compressed representation: }
+\noindent To reduce one training example $ x $ from $ n $ dimension to $ k $ dimensions,
+
+\begin{equation}
+	z = U_{reduce}^T x
+\end{equation}
+
+\noindent Now, given the compressed form $ z $, original $ n $ dimensional vector $ x $ can be
+approximated by,
+\begin{equation}
+	x_{approx} = U_{reduce} z
+\end{equation}
+
+\noindent \textbf{Chossing the number of principal components: }
+\noindent PCA tries to minimize the \emph{average squared projection error},
+\begin{equation}
+	\frac{1}{m} \sum_{i=1}^{m} \norm{x^{(i)} - x_{approx}^{(i)}}^2
+\end{equation}
+
+\noindent Total variation in the data is defined as,
+\begin{equation}
+	\frac{1}{m} \sum_{i=1}^{m} \norm{x^{(i)}}^2
+\end{equation}
+
+\noindent Choose $ k $ to be smallest values such that,
+\begin{equation}
+	\frac{\frac{1}{m} \sum_{i=1}^{m} \norm{x^{(i)} - x_{approx}^{(i)}}^2}
+	{\frac{1}{m} \sum_{i=1}^{m} \norm{x^{(i)}}^2} \leq 0.01
+\end{equation}
+\noindent \orangebox{99\% of the variance is retained}
+
+\vspace{0.5cm}
+
+\noindent \textbf{Step 1:} Try PCA with $ k = 1 $
+
+\noindent \textbf{Step 2:} Compute $ U_{reduce}, z^{(1)}, ..., z^{(m)}, x_{approx}^{(1)}, ..., x_{approx}^{(m)} $
+
+\noindent \textbf{Step 3:} Check if,
+\begin{equation}
+	\frac{\frac{1}{m} \sum_{i=1}^{m} \norm{x^{(i)} - x_{approx}^{(i)}}^2}
+	{\frac{1}{m} \sum_{i=1}^{m} \norm{x^{(i)}}^2} \leq 0.01
+\end{equation}
+
+\noindent If it is, stop. Otherwise, repeat from the start with $ k \leftarrow k + 1 $
+
+\vspace{0.5cm}
+
+\noindent But this procedure is not efficient. While computing $ U, S, V $ using \emph{svd}, we only used
+the matrix $ U $, containing the eigenvectors. But, $ S $ can be used when choosing the number of principal
+components. $ S \in \mathbb{R}^{(n \times n)} $ is a diagonal matrix with entries $ S_{11} ,..., S{nn} $.
+
+\begin{equation}
+	\frac{\sum_{i=1}^{k} S_{ii}}{\sum_{i=1}^{n} S_{ii}} \geq 0.99
+	\label{eq:12}
+\end{equation}
+
+\noindent So, apply \emph{svd} on $ \Sigma $ to find the matrix $ S $. Use this $ S $ matrix to choose $ k $
+using equation \ref{eq:12}.
 
 \end{document}

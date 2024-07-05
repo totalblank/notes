@@ -22,6 +22,8 @@
 \usepackage{float}
 \usepackage{physics}
 \usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{titlesec}
 \hypersetup{
 	colorlinks=true,
 	linkcolor=blue,
@@ -88,3 +90,9 @@
 \usepgfplotslibrary{colorbrewer}
 \pgfplotsset{width=8cm,compat=1.9}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%% Centering section titles
+\titleformat{\section}[block]{\Large\bfseries\filcenter}{}{1em}{}
+
+%% norm
+%%\newcommand\norm[1]{\lVert #1 \rVert}
