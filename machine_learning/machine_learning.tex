@@ -8,7 +8,29 @@
 
 \section*{Learning}
 
-\subsection*{Dimensionality Reduction}
+\subsection*{K-Means Algorithm}
+\noindent Input to the algorithm are,
+\begin{itemize}
+\itemsep0em
+	\item K (number of clusters)
+	\item Training set $ {x^{(1), ..., x^{(m)}}} $
+\end{itemize}
+
+\noindent At first, K points are randomly initialized. In the \emph{Cluster assignment} step, each
+of $ x^{(i)} $ is assigned a cluster number (1 to K) depending on how close the point $ x^{(i)} $
+to a specific cluster centroid. In the \emph{Move centroid} step, mean of the points which are
+assigned to the a particular cluster number is calculated and assigned to the cluster centroid of that
+cluster centroid. Following is the algorithm,
+
+\noindent Randomly initialize $ K $ cluster centroids $ \mu_1, \mu_2, ... , \mu_K \in \mathbb{R}^n $.
+
+\begin{algorithmic}
+	Repeat {
+		
+	}
+\end{algorithmic}
+
+\subsection*{Dimensionality Reduction using PCA}
 \noindent \textbf{Data Compression: } Reduce data from 2D to 1D,
 or reduce data from 3D to 2D. Reduces the number of features
 that the data has.
@@ -202,5 +224,34 @@ components. $ S \in \mathbb{R}^{(n \times n)} $ is a diagonal matrix with entrie
 
 \noindent So, apply \emph{svd} on $ \Sigma $ to find the matrix $ S $. Use this $ S $ matrix to choose $ k $
 using equation \ref{eq:12}.
+
+\vspace{0.5cm}
+
+\pagebreak
+
+\noindent A couple of points to note regarding PCA,
+
+\begin{description}
+	\item[DO: Speeding up the learning algorithm] \hfill \\
+		$ (x^{(1)}, y^{(1)}), ..., (x^{(m)}, y^{(m)}) $ and $ x^{(i)} \in \mathbb{R}^{(100 \times 100)} $.
+		Extract the inputs, $ x^{(1)}, ... , x^{(m)} \in \mathbb{R}^{(100 \times 100)} $.
+		Apply PCA, $ z^{(1)}, ..., z^{(m)} \in \mathbb{R}^{(30 \times 30)} $.
+		The new training set is now, $ (z^{(1)}, y^{(1)}), ..., (z^{(m)}, y^{(m)}) $.
+		Feed this new training set into the learning algorithm $ h_\theta (z) \rightarrow y $. When a new
+		training example is encountered, $ z = U_{reduce}^T x $ and $ h_\theta(z) \rightarrow y $.
+
+		This mapping ($ x \rightarrow z) $ should only be \emph{defined} by running PCA on the training
+		set, which is then applied to $ x_{cv} $ and $ x_{test} $.
+
+	\item[Don't: Preventing overfitting] \hfill \\
+		PCA should not be used to prevent overfitting. Because it reduces the dimension of the input
+		data without considering the labels ($ y^{(i)} $). Instead, use regularization to prevent
+		overfitting.
+
+	\item[Don't: Design ML systems] \hfill \\
+		PCA throws away information. At first, use original data in the learning algorithm. Only when
+		the original data doesn't accomplish the desired objective, use PCA.
+
+\end{description}
 
 \end{document}
